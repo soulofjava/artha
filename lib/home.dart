@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login_page.dart'; // Import halaman login
+import 'keuangan_page.dart'; // Import halaman keuangan
+import 'user_page.dart'; // Import halaman user
 
 class HomePage extends StatefulWidget {
   @override
@@ -78,6 +80,59 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
+      drawer: Drawer(
+        // Tambahkan drawer untuk sidebar menu
+        child: Container(
+          color: Colors.blue[50], // Warna latar belakang drawer
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue, // Warna latar belakang header
+                ),
+                child: Center(
+                  // Mengatur teks agar berada di tengah
+                  child: Text(
+                    'Artha', // Ganti tulisan menjadi "Artha"
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                    ),
+                  ),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.account_balance,
+                    color: Colors.blue), // Ikon untuk Keuangan
+                title: Text('Keuangan'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            KeuanganPage()), // Navigasi ke halaman keuangan
+                  );
+                },
+              ),
+              Divider(), // Pemisah antara item menu
+              ListTile(
+                leading:
+                    Icon(Icons.person, color: Colors.blue), // Ikon untuk User
+                title: Text('User'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            UserPage()), // Navigasi ke halaman user
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
       body: Center(
         child: username != null
             ? Column(
@@ -87,6 +142,7 @@ class _HomePageState extends State<HomePage> {
                     'Welcome, $username!', // Tampilkan nama pengguna
                     style: TextStyle(fontSize: 24),
                   ),
+                  SizedBox(height: 20),
                 ],
               )
             : CircularProgressIndicator(), // Tampilkan loader saat memuat username

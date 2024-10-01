@@ -37,9 +37,10 @@ class DatabaseHelper {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<List<User>> getUsers() async {
+  Future<List<User>> getAllUsers() async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query('users');
+
     return List.generate(maps.length, (i) {
       return User(
         id: maps[i]['id'],
@@ -64,5 +65,14 @@ class DatabaseHelper {
       );
     }
     return null;
+  }
+
+  Future<void> deleteUser(int id) async {
+    final db = await database;
+    await db.delete(
+      'users',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 }
