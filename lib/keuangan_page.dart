@@ -21,21 +21,11 @@ class _KeuanganPageState extends State<KeuanganPage> {
   // Ambil data keuangan dari SQLite
   void _fetchKeuanganData() async {
     final allRows = await keuanganHelper.queryAllRows();
+    _totalUangMasuk = await keuanganHelper.totalUangMasuk();
+    _totalUangKeluar = await keuanganHelper.totalUangKeluar();
     setState(() {
       _keuanganList = allRows;
-      _calculateTotals();
     });
-  }
-
-  // Hitung total uang masuk dan uang keluar
-  void _calculateTotals() {
-    _totalUangMasuk = 0.0;
-    _totalUangKeluar = 0.0;
-
-    for (var item in _keuanganList) {
-      _totalUangMasuk += item[KeuanganHelper.columnUangMasuk];
-      _totalUangKeluar += item[KeuanganHelper.columnUangKeluar];
-    }
   }
 
   // Fungsi untuk menampilkan dialog tambah data baru
@@ -476,76 +466,71 @@ class _KeuanganPageState extends State<KeuanganPage> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Table(
-                border: TableBorder.all(),
-                columnWidths: {
-                  0: FixedColumnWidth(200), // Lebar kolom pertama
-                  1: FixedColumnWidth(150), // Lebar kolom kedua
-                },
-                children: [
-                  TableRow(
-                    decoration: BoxDecoration(
-                        color: Colors
-                            .grey[300]), // Warna latar belakang untuk header
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'Deskripsi',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                scrollDirection: Axis.horizontal,
+                child: Table(
+                  border: TableBorder.all(),
+                  columnWidths: {
+                    0: FixedColumnWidth(200),
+                    1: FixedColumnWidth(150),
+                  },
+                  children: [
+                    TableRow(
+                      decoration: BoxDecoration(color: Colors.grey[300]),
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Total Uang Masuk',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'Jumlah',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Rp ${_totalUangMasuk.toStringAsFixed(2)}',
+                            style: TextStyle(color: Colors.green),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  TableRow(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text('Total Uang Masuk'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text('Rp ${_totalUangMasuk.toStringAsFixed(2)}'),
-                      ),
-                    ],
-                  ),
-                  TableRow(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text('Total Uang Keluar'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child:
-                            Text('Rp ${_totalUangKeluar.toStringAsFixed(2)}'),
-                      ),
-                    ],
-                  ),
-                  TableRow(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text('Saldo'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                            'Rp ${(_totalUangMasuk - _totalUangKeluar).toStringAsFixed(2)}'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Total Uang Keluar',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Rp ${_totalUangKeluar.toStringAsFixed(2)}',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Saldo',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Rp ${(_totalUangMasuk - _totalUangKeluar).toStringAsFixed(2)}',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                )),
           ),
           SizedBox(
             height: 30,

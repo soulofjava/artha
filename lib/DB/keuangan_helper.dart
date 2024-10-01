@@ -76,4 +76,31 @@ class KeuanganHelper {
     Database db = await instance.database;
     return await db.delete(table, where: '$columnId = ?', whereArgs: [id]);
   }
+
+  // Calculate total money in
+  Future<double> totalUangMasuk() async {
+    Database db = await instance.database;
+    final result =
+        await db.rawQuery('SELECT SUM($columnUangMasuk) as total FROM $table');
+    return result.isNotEmpty && result.first['total'] != null
+        ? result.first['total'] as double
+        : 0.0;
+  }
+
+  // Calculate total money out
+  Future<double> totalUangKeluar() async {
+    Database db = await instance.database;
+    final result =
+        await db.rawQuery('SELECT SUM($columnUangKeluar) as total FROM $table');
+    return result.isNotEmpty && result.first['total'] != null
+        ? result.first['total'] as double
+        : 0.0;
+  }
+
+  // Calculate balance
+  Future<double> calculateSaldo() async {
+    double totalMasuk = await totalUangMasuk();
+    double totalKeluar = await totalUangKeluar();
+    return totalMasuk - totalKeluar; // Saldo = total masuk - total keluar
+  }
 }
