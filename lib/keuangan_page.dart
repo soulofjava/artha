@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'DB/keuangan_helper.dart';
+import 'package:intl/intl.dart';
 
 class KeuanganPage extends StatefulWidget {
   @override
@@ -26,6 +27,13 @@ class _KeuanganPageState extends State<KeuanganPage> {
     setState(() {
       _keuanganList = allRows;
     });
+  }
+
+  // Function to format currency
+  String formatCurrency(double amount) {
+    final formatter =
+        NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 2);
+    return formatter.format(amount);
   }
 
   // Fungsi untuk menampilkan dialog tambah data baru
@@ -412,7 +420,8 @@ class _KeuanganPageState extends State<KeuanganPage> {
                                             ),
                                           ),
                                           Text(
-                                            'Rp ${keuangan[KeuanganHelper.columnUangMasuk]}',
+                                            formatCurrency(keuangan[KeuanganHelper
+                                                .columnUangMasuk]), // Call the formatCurrency function directly
                                             style: TextStyle(
                                               fontSize: 16,
                                               color: Colors.black,
@@ -444,7 +453,8 @@ class _KeuanganPageState extends State<KeuanganPage> {
                                             ),
                                           ),
                                           Text(
-                                            'Rp ${keuangan[KeuanganHelper.columnUangKeluar]}',
+                                            formatCurrency(keuangan[KeuanganHelper
+                                                .columnUangKeluar]), // Call the formatCurrency function directly
                                             style: TextStyle(
                                               fontSize: 16,
                                               color: Colors.black,
@@ -466,71 +476,72 @@ class _KeuanganPageState extends State<KeuanganPage> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Table(
-                  border: TableBorder.all(),
-                  columnWidths: {
-                    0: FixedColumnWidth(200),
-                    1: FixedColumnWidth(150),
-                  },
-                  children: [
-                    TableRow(
-                      decoration: BoxDecoration(color: Colors.grey[300]),
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Total Uang Masuk',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
+              scrollDirection: Axis.horizontal,
+              child: Table(
+                border: TableBorder.all(),
+                columnWidths: {
+                  0: FixedColumnWidth(200),
+                  1: FixedColumnWidth(150),
+                },
+                children: [
+                  TableRow(
+                    decoration: BoxDecoration(color: Colors.grey[300]),
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Total Uang Masuk',
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Rp ${_totalUangMasuk.toStringAsFixed(2)}',
-                            style: TextStyle(color: Colors.green),
-                          ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          formatCurrency(_totalUangMasuk),
+                          style: TextStyle(color: Colors.green),
                         ),
-                      ],
-                    ),
-                    TableRow(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Total Uang Keluar',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
+                      ),
+                    ],
+                  ),
+                  TableRow(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Total Uang Keluar',
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Rp ${_totalUangKeluar.toStringAsFixed(2)}',
-                            style: TextStyle(color: Colors.red),
-                          ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          formatCurrency(_totalUangKeluar),
+                          style: TextStyle(color: Colors.red),
                         ),
-                      ],
-                    ),
-                    TableRow(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Saldo',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
+                      ),
+                    ],
+                  ),
+                  TableRow(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Saldo',
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Rp ${(_totalUangMasuk - _totalUangKeluar).toStringAsFixed(2)}',
-                            style: TextStyle(color: Colors.black),
-                          ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          formatCurrency(_totalUangMasuk - _totalUangKeluar),
+                          style: TextStyle(color: Colors.black),
                         ),
-                      ],
-                    ),
-                  ],
-                )),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
           SizedBox(
             height: 30,
