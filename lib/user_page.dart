@@ -37,6 +37,7 @@ class _UserPageState extends State<UserPage> {
             textAlign: TextAlign.center, // Align text to center
           ),
         ),
+        behavior: SnackBarBehavior.floating,
       ),
     );
   }

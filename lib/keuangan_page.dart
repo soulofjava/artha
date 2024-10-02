@@ -136,6 +136,7 @@ class _KeuanganPageState extends State<KeuanganPage> {
                     SnackBar(
                       content: Text('Kolom tidak boleh kosong!'),
                       backgroundColor: Colors.red,
+                      behavior: SnackBarBehavior.floating,
                     ),
                   );
                   return; // Hentikan proses jika ada kolom kosong
@@ -303,6 +304,7 @@ class _KeuanganPageState extends State<KeuanganPage> {
                     SnackBar(
                       content: Text('Kolom tidak boleh kosong!'),
                       backgroundColor: Colors.red,
+                      behavior: SnackBarBehavior.floating,
                     ),
                   );
                   return; // Hentikan proses jika ada kolom kosong

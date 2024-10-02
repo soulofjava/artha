@@ -1,5 +1,5 @@
-// lib/register_page.dart
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'DB/database_helper.dart';
 import 'models/user.dart';
 import 'home.dart';
@@ -50,6 +50,11 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
     );
 
+    // Simpan status login di SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', true);
+    await prefs.setString('username', user.username);
+    
     // Navigasi ke halaman Home setelah registrasi berhasil
     Navigator.pushReplacement(
       context,
@@ -60,32 +65,51 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Register')),
+      backgroundColor: Color(0xFFE8F5E9), // Warna latar belakang hijau muda
+      appBar: AppBar(
+        title: Text('Register'),
+        backgroundColor: Color(0xFF4CAF50), // Warna hijau gelap untuk AppBar
+      ),
       body: Center(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Username Field
               TextField(
                 controller: _usernameController,
                 decoration: InputDecoration(
                   labelText: 'Username',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.person),
+                  filled: true,
+                  fillColor: Colors.white,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Color(0xFF4CAF50)), // Hijau saat fokus
+                  ),
                 ),
               ),
               SizedBox(height: 20),
+              // Password Field
               TextField(
                 controller: _passwordController,
                 decoration: InputDecoration(
                   labelText: 'Password',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.lock),
+                  filled: true,
+                  fillColor: Colors.white,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Color(0xFF4CAF50)), // Hijau saat fokus
+                  ),
                 ),
                 obscureText: true,
               ),
               SizedBox(height: 20),
+              // Register Button
               ElevatedButton(
                 onPressed: _register,
                 child: Text('Register'),
@@ -94,6 +118,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
+                  elevation: 5, // Tambahkan bayangan untuk efek kedalaman
                 ),
               ),
             ],

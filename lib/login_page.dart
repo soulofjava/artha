@@ -1,5 +1,5 @@
-import 'package:artha/register_page.dart';
 import 'package:flutter/material.dart';
+import 'package:artha/register_page.dart'; // Pastikan untuk mengimpor halaman Register
 import 'package:shared_preferences/shared_preferences.dart';
 import 'DB/database_helper.dart';
 import 'models/user.dart';
@@ -85,50 +85,93 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Login')),
+      backgroundColor: Color(0xFFE8F5E9), // Warna latar belakang hijau muda
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Menambahkan gambar logo
+              Image.asset(
+                'lib/images/logo.jpg',
+                height: 100,
+                fit: BoxFit.contain,
+              ),
+              SizedBox(height: 20),
+              // Judul Halaman
+              Text(
+                'Login',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF388E3C), // Warna hijau gelap
+                ),
+              ),
+              SizedBox(height: 20),
+              // Username Field
               TextField(
                 controller: _usernameController,
                 decoration: InputDecoration(
                   labelText: 'Username',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.person),
+                  filled: true,
+                  fillColor: Colors.white,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Color(0xFF388E3C)), // Hijau gelap saat fokus
+                  ),
                 ),
               ),
               SizedBox(height: 20),
+              // Password Field
               TextField(
                 controller: _passwordController,
                 decoration: InputDecoration(
                   labelText: 'Password',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.lock),
+                  filled: true,
+                  fillColor: Colors.white,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Color(0xFF388E3C)), // Hijau gelap saat fokus
+                  ),
                 ),
                 obscureText: true,
               ),
               SizedBox(height: 20),
+              // Login Button
               ElevatedButton(
                 onPressed: _login,
                 child: Text('Login'),
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  shadowColor:
+                      Color(0xFF4CAF50).withOpacity(0.5), // Warna bayangan
+                  elevation: 8, // Menambahkan bayangan untuk efek kedalaman
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
+                    side: BorderSide(color: Color(0xFF4CAF50)), // Border hijau
                   ),
                 ),
               ),
+              SizedBox(height: 10), // Jarak antara tombol dan tautan register
               TextButton(
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => RegisterPage()),
+                    MaterialPageRoute(
+                      builder: (context) => RegisterPage(),
+                    ),
                   );
                 },
-                child: Text('Register'),
+                child: Text(
+                  'Belum punya akun? Daftar',
+                  style: TextStyle(
+                      color: Color(0xFF388E3C)), // Hijau gelap untuk teks
+                ),
               ),
             ],
           ),
