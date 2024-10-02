@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'DB/keuangan_helper.dart';
 import 'package:path/path.dart';
 import 'models/keuangan.dart';
+
 class ExportPage extends StatefulWidget {
   @override
   _ExportPageState createState() => _ExportPageState();
@@ -75,28 +76,46 @@ class _ExportPageState extends State<ExportPage> {
 
       // Add headers to the sheet
       sheet.appendRow(
-          ['ID', 'Tanggal', 'Catatan', 'Uang Masuk', 'Uang Keluar', 'Saldo']);
+          ['Tanggal', 'Catatan', 'Uang Masuk', 'Uang Keluar', 'Saldo']);
+
+      // Initialize totals
+      double totalUangMasuk = 0.0;
+      double totalUangKeluar = 0.0;
 
       for (var record in records) {
         // Parse the string values to double
+        double masuk = double.tryParse(record.uangMasuk.toString()) ?? 0.0;
+        double keluar = double.tryParse(record.uangKeluar.toString()) ?? 0.0;
+
+        // Update totals
+        totalUangMasuk += masuk;
+        totalUangKeluar += keluar;
 
         // Print each record's details, including the calculated saldo
         print(
           'ID: ${record.id}, Tanggal: ${record.tanggal}, Catatan: ${record.catatan}, '
           'Uang Masuk: ${record.uangMasuk}, Uang Keluar: ${record.uangKeluar}, '
-          'Saldo: ${record.uangMasuk} - ${record.uangKeluar}',
+          'Saldo: ${masuk - keluar}',
         );
 
         // Append row to the sheet
         sheet.appendRow([
-          record.id,
-          record.tanggal,
-          record.catatan,
-          record.uangMasuk,
-          record.uangKeluar,
-          record.uangMasuk - record.uangKeluar,
+          record.tanggal ?? '',
+          record.catatan ?? '',
+          record.uangMasuk ?? 0.0,
+          record.uangKeluar ?? 0.0,
+          masuk - keluar, // Show saldo for the record
         ]);
       }
+
+      // Append total rows to the sheet
+      sheet.appendRow([
+        '',
+        'Total',
+        totalUangMasuk,
+        totalUangKeluar,
+        totalUangMasuk - totalUangKeluar
+      ]);
 
       // Use FilePicker for directory selection
       String? outputDirectory = await FilePicker.platform.getDirectoryPath(
@@ -104,14 +123,13 @@ class _ExportPageState extends State<ExportPage> {
       );
 
       if (outputDirectory != null) {
-          // Get the current date and time
+        // Get the current date and time
         DateTime now = DateTime.now();
         String formattedDate = '${now.year}-${now.month}-${now.day}';
         String formattedTime = '${now.hour}-${now.minute}-${now.second}';
         String fileName = 'exported_data_$formattedDate$formattedTime.xlsx';
 
         String filePath = join(outputDirectory, fileName);
-
 
         // Save the Excel file asynchronously
         List<int>? fileBytes = excel.save();
