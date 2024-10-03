@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:excel/excel.dart';
 import 'dart:io';
@@ -100,10 +102,10 @@ class _ExportPageState extends State<ExportPage> {
 
         // Append row to the sheet
         sheet.appendRow([
-          record.tanggal ?? '',
-          record.catatan ?? '',
-          record.uangMasuk ?? 0.0,
-          record.uangKeluar ?? 0.0,
+          record.tanggal,
+          record.catatan,
+          record.uangMasuk,
+          record.uangKeluar,
           masuk - keluar, // Show saldo for the record
         ]);
       }
