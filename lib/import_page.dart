@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, avoid_print
 
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
@@ -45,7 +45,6 @@ class ImportPage extends StatelessWidget {
               // Skip the first and last rows
               for (int i = 1; i < sheet.rows.length - 1; i++) {
                 var row = sheet.rows[i];
-
                 // Ensure all cells have values before inserting to database
                 if (row.length >= 5) {
                   String tanggal = row[0]?.value?.toString() ?? '';
@@ -56,6 +55,9 @@ class ImportPage extends StatelessWidget {
                       double.tryParse(row[3]?.value?.toString() ?? '0') ?? 0;
                   double saldo = uangMasuk - uangKeluar;
 
+                  print(
+                      'Parsed Values: tanggal=$tanggal, catatan=$catatan, uangMasuk=$uangMasuk, uangKeluar=$uangKeluar, saldo=$saldo');
+
                   // Insert the data to SQLite database
                   await insertDataToDatabase(
                       tanggal, catatan, uangMasuk, uangKeluar, saldo);
@@ -63,7 +65,10 @@ class ImportPage extends StatelessWidget {
               }
 
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Data Imported Successfully')),
+                SnackBar(
+                  content: Text('Data Imported Successfully'),
+                  behavior: SnackBarBehavior.floating,
+                ),
               );
             }
           },
