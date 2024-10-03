@@ -1,11 +1,12 @@
-// ignore_for_file: prefer_const_constructors, sort_child_properties_last
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last, avoid_print, prefer_final_fields
 
 import 'package:flutter/material.dart';
-import 'package:artha/register_page.dart'; // Pastikan untuk mengimpor halaman Register
+import 'package:artha/register_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:local_auth/local_auth.dart';
 import 'DB/database_helper.dart';
 import 'models/user.dart';
-import 'home.dart'; // Import halaman home
+import 'home.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -15,24 +16,56 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  final LocalAuthentication auth = LocalAuthentication();
+  bool _showFingerprintButton = false;
 
   @override
   void initState() {
     super.initState();
-    _checkLoggedIn(); // Cek status login saat halaman diinisialisasi
+    _checkLoggedIn(); // Check login status at initialization
   }
 
   Future<void> _checkLoggedIn() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isLoggedIn =
-        prefs.getBool('isLoggedIn') ?? false; // Ambil status login
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
     if (isLoggedIn) {
-      // Jika sudah login, arahkan ke halaman Home
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
+      // Check if biometric authentication is possible
+      bool canAuthenticate = await auth.canCheckBiometrics;
+      setState(() {
+        _showFingerprintButton =
+            canAuthenticate; // Show button if biometrics are available
+      });
+
+      // If already logged in, optionally perform auto-authentication
+      bool isAuthenticated = await _authenticateWithFingerprint();
+      if (isAuthenticated) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      }
     }
+  }
+
+  // Method for fingerprint authentication
+  Future<bool> _authenticateWithFingerprint() async {
+    bool canCheckBiometrics = await auth.canCheckBiometrics;
+    bool isAuthenticated = false;
+
+    if (canCheckBiometrics) {
+      try {
+        isAuthenticated = await auth.authenticate(
+          localizedReason: 'Gunakan sidik jari untuk masuk',
+          options: const AuthenticationOptions(
+            biometricOnly: true,
+          ),
+        );
+      } catch (e) {
+        print(e);
+      }
+    }
+    return isAuthenticated;
   }
 
   Future<void> _login() async {
@@ -59,7 +92,6 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     if (user != null) {
-      // Simpan status login di SharedPreferences
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setBool('isLoggedIn', true);
       await prefs.setString('username', user.username);
@@ -87,31 +119,28 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFE8F5E9), // Warna latar belakang hijau muda
+      backgroundColor: Color(0xFFE8F5E9),
       body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Menambahkan gambar logo
               Image.asset(
                 'lib/images/logo.jpg',
                 height: 100,
                 fit: BoxFit.contain,
               ),
               SizedBox(height: 20),
-              // Judul Halaman
               Text(
                 'Login',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF388E3C), // Warna hijau gelap
+                  color: Color(0xFF388E3C),
                 ),
               ),
               SizedBox(height: 20),
-              // Username Field
               TextField(
                 controller: _usernameController,
                 decoration: InputDecoration(
@@ -121,13 +150,11 @@ class _LoginPageState extends State<LoginPage> {
                   filled: true,
                   fillColor: Colors.white,
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: Color(0xFF388E3C)), // Hijau gelap saat fokus
+                    borderSide: BorderSide(color: Color(0xFF388E3C)),
                   ),
                 ),
               ),
               SizedBox(height: 20),
-              // Password Field
               TextField(
                 controller: _passwordController,
                 decoration: InputDecoration(
@@ -137,29 +164,51 @@ class _LoginPageState extends State<LoginPage> {
                   filled: true,
                   fillColor: Colors.white,
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: Color(0xFF388E3C)), // Hijau gelap saat fokus
+                    borderSide: BorderSide(color: Color(0xFF388E3C)),
                   ),
                 ),
                 obscureText: true,
               ),
               SizedBox(height: 20),
-              // Login Button
               ElevatedButton(
                 onPressed: _login,
                 child: Text('Login'),
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                  shadowColor:
-                      Color(0xFF4CAF50).withOpacity(0.5), // Warna bayangan
-                  elevation: 8, // Menambahkan bayangan untuk efek kedalaman
+                  shadowColor: Color(0xFF4CAF50).withOpacity(0.5),
+                  elevation: 8,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
-                    side: BorderSide(color: Color(0xFF4CAF50)), // Border hijau
+                    side: BorderSide(color: Color(0xFF4CAF50)),
                   ),
                 ),
               ),
-              SizedBox(height: 10), // Jarak antara tombol dan tautan register
+              SizedBox(height: 10),
+              // Show fingerprint button if the user is already logged in and biometrics are available
+              if (_showFingerprintButton)
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    bool isAuthenticated = await _authenticateWithFingerprint();
+                    if (isAuthenticated) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomePage()),
+                      );
+                    }
+                  },
+                  icon: Icon(Icons.fingerprint),
+                  label: Text('Masuk dengan Sidik Jari'),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    shadowColor: Color(0xFF4CAF50).withOpacity(0.5),
+                    elevation: 8,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      side: BorderSide(color: Color(0xFF4CAF50)),
+                    ),
+                  ),
+                ),
+              SizedBox(height: 10),
               TextButton(
                 onPressed: () {
                   Navigator.push(
@@ -171,8 +220,7 @@ class _LoginPageState extends State<LoginPage> {
                 },
                 child: Text(
                   'Belum punya akun? Daftar',
-                  style: TextStyle(
-                      color: Color(0xFF388E3C)), // Hijau gelap untuk teks
+                  style: TextStyle(color: Color(0xFF388E3C)),
                 ),
               ),
             ],
