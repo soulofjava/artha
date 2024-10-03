@@ -1,3 +1,6 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'package:artha/reset_data_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login_page.dart'; // Import halaman login
@@ -145,6 +148,22 @@ class _HomePageState extends State<HomePage> {
                     MaterialPageRoute(
                         builder: (context) =>
                             ExportPage()), // Navigasi ke halaman export
+                  );
+                },
+              ),
+              Divider(), // Pemisah antara item menu
+              ListTile(
+                leading: Icon(
+                  Icons.restart_alt,
+                  color: Color(0xFF4CAF50), // Warna ikon untuk Export
+                ),
+                title: Text('Reset Data'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ResetDataPage()), // Navigasi ke halaman export
                   );
                 },
               ),
