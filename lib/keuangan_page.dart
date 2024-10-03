@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'DB/keuangan_helper.dart';
 import 'package:intl/intl.dart';

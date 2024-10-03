@@ -61,7 +61,10 @@ class KeuanganHelper {
   // Retrieve all records
   Future<List<Map<String, dynamic>>> queryAllRows() async {
     Database db = await instance.database;
-    return await db.query(table);
+    return await db.query(
+      table,
+      orderBy: "tanggal DESC",
+    );
   }
 
   // Update a record
@@ -102,5 +105,35 @@ class KeuanganHelper {
     double totalMasuk = await totalUangMasuk();
     double totalKeluar = await totalUangKeluar();
     return totalMasuk - totalKeluar; // Saldo = total masuk - total keluar
+  }
+
+  // Calculate total money in and out for a specific month in 'YYYY-MM' format
+  Future<List<Map<String, dynamic>>> totalByMonth(String month) async {
+    Database db = await instance.database;
+    final result = await db.rawQuery('''
+    SELECT 
+      strftime('%Y-%m', $columnTanggal) as month, 
+      SUM($columnUangMasuk) as totalUangMasuk, 
+      SUM($columnUangKeluar) as totalUangKeluar
+    FROM $table
+    WHERE $columnTanggal LIKE ? -- Filter by month in 'YYYY-MM' format
+    GROUP BY month
+    ORDER BY month DESC
+  ''', ['$month%']); // Pass the month as a parameter in 'YYYY-MM%' format
+
+    return result;
+  }
+
+  // Retrieve unique months from the database
+  Future<List<String>> getUniqueMonths() async {
+    Database db = await instance.database;
+    final result = await db.rawQuery('''
+    SELECT DISTINCT strftime('%Y-%m', $columnTanggal) as month
+    FROM $table
+    ORDER BY month DESC
+  ''');
+
+    // Extract the month strings from the result
+    return result.map((row) => row['month'].toString()).toList();
   }
 }
