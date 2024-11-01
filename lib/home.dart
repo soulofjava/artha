@@ -81,6 +81,14 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+// Function to format the month from 'YYYY-MM' to 'Month'
+  String formatSelectedMonth(String month) {
+    final parts = month.split('-');
+    final monthNumber = int.parse(parts[1]);
+    return DateFormat('MMMM')
+        .format(DateTime(0, monthNumber)); // Get month name
+  }
+
   // Function to format currency
   String formatCurrency(double amount) {
     final formatter =
@@ -159,142 +167,145 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       drawer: AppDrawer(), // Use the new AppDrawer widget
-      body: Center(
-        child: username != null
-            ? Padding(
-                padding: const EdgeInsets.all(
-                    16.0), // Add padding around the content
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Welcome Text
-                    Text(
-                      'Hi, $username!',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.teal,
-                      ),
-                    ),
-                    SizedBox(height: 20),
-
-                    // Add the MonthlyTotalsChart widget above the dropdown
-                    MonthlyTotalsChart(), // No data passed to the chart
-
-                    SizedBox(height: 30),
-
-                    // Month selection dropdown inside a Card
-                    Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      elevation: 4,
-                      margin: EdgeInsets.symmetric(horizontal: 20),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: DropdownButton<String>(
-                          isExpanded: true,
-                          value: selectedMonth,
-                          hint: Text('Pilih Bulan'),
-                          items: months.map((String month) {
-                            return DropdownMenuItem<String>(
-                              value: month,
-                              child: Text(formatMonth(
-                                  month)), // Display month in 'Month Year' format
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) async {
-                            // Set the new value and call _displayMonthlyTotals
-                            setState(() {
-                              selectedMonth = newValue;
-                            });
-
-                            // Fetch data for the selected month
-                            if (newValue != null) {
-                              await _displayMonthlyTotals(newValue);
-                            }
-                          },
+      body: SingleChildScrollView(
+        child: Center(
+          child: username != null
+              ? Padding(
+                  padding: const EdgeInsets.all(
+                      16.0), // Add padding around the content
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Welcome Text
+                      Text(
+                        'Hi, $username!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.teal,
                         ),
                       ),
-                    ),
-                    SizedBox(height: 30),
+                      SizedBox(height: 20),
 
-                    // Display total money in a Card
-                    Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      elevation: 4,
-                      margin: EdgeInsets.symmetric(horizontal: 20),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Text(
-                              'Total Uang Masuk',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green,
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              formatCurrency(monthlyTotals['uangmasuk'] ?? 0),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green,
-                              ),
-                            ),
-                          ],
+                      // Add the MonthlyTotalsChart widget above the dropdown
+                      MonthlyTotalsChart(), // No data passed to the chart
+
+                      SizedBox(height: 30),
+
+                      // Month selection dropdown inside a Card
+                      Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 4,
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: DropdownButton<String>(
+                            isExpanded: true,
+                            value: selectedMonth,
+                            hint: Text('Pilih Bulan'),
+                            items: months.map((String month) {
+                              return DropdownMenuItem<String>(
+                                value: month,
+                                child: Text(formatMonth(
+                                    month)), // Display month in 'Month Year' format
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) async {
+                              // Set the new value and call _displayMonthlyTotals
+                              setState(() {
+                                selectedMonth = newValue;
+                              });
+
+                              // Fetch data for the selected month
+                              if (newValue != null) {
+                                await _displayMonthlyTotals(newValue);
+                              }
+                            },
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 20),
+                      SizedBox(height: 30),
 
-                    // Display total money out in a Card
-                    Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      elevation: 4,
-                      margin: EdgeInsets.symmetric(horizontal: 20),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Text(
-                              'Total Uang Keluar',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red,
+                      // Display total money in a Card
+                      Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 4,
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Text(
+                                'Total Uang Masuk bulan ${formatSelectedMonth(selectedMonth!)}', // Display only month name
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green,
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              formatCurrency(monthlyTotals['uangkeluar'] ?? 0),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red,
+                              SizedBox(height: 10),
+                              Text(
+                                formatCurrency(monthlyTotals['uangmasuk'] ?? 0),
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              )
-            : CircularProgressIndicator(), // Show loader while username is loading
+                      SizedBox(height: 20),
+
+                      // Display total money out in a Card
+                      Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 4,
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Text(
+                                'Total Uang Masuk bulan ${formatSelectedMonth(selectedMonth!)}', // Display only month name
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                formatCurrency(
+                                    monthlyTotals['uangkeluar'] ?? 0),
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : CircularProgressIndicator(), // Show loader while username is loading
+        ),
       ),
     );
   }
