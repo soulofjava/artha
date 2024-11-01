@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:artha/DB/keuangan_helper.dart';
 import 'package:artha/reset_data_page.dart';
 import 'package:flutter/material.dart';
@@ -91,6 +89,16 @@ class _HomePageState extends State<HomePage> {
     final formatter =
         NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 2);
     return formatter.format(amount);
+  }
+
+  // Function to convert month format from 'YYYY-MM' to 'Month YYYY'
+  String formatMonth(String month) {
+    final parts = month.split('-');
+    final year = parts[0];
+    final monthNumber = int.parse(parts[1]);
+    final monthName =
+        DateFormat('MMMM').format(DateTime(0, monthNumber)); // Get month name
+    return '$monthName $year'; // Return in 'Month YYYY' format
   }
 
   Future<void> _logout() async {
@@ -283,8 +291,8 @@ class _HomePageState extends State<HomePage> {
                           items: months.map((String month) {
                             return DropdownMenuItem<String>(
                               value: month,
-                              child: Text(
-                                  month), // Display month in YYYY-MM format
+                              child: Text(formatMonth(
+                                  month)), // Display month in 'Month Year' format
                             );
                           }).toList(),
                           onChanged: (String? newValue) async {
