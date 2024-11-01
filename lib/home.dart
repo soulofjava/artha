@@ -8,6 +8,7 @@ import 'user_page.dart';
 import 'import_page.dart';
 import 'export_page.dart';
 import 'package:intl/intl.dart';
+import 'monthly_totals_chart.dart'; // Import the chart file
 
 class HomePage extends StatefulWidget {
   @override
@@ -22,6 +23,13 @@ class _HomePageState extends State<HomePage> {
   // List of months and selected month
   List<String> months = [];
   String? selectedMonth;
+
+  // Store monthly income and expenses for the chart
+  List<double> monthlyIncome =
+      List.filled(12, 0); // Initialize with 0 for each month
+  List<double> monthlyExpenses =
+      List.filled(12, 0); // Initialize with 0 for each month
+
 
   @override
   void initState() {
@@ -77,6 +85,11 @@ class _HomePageState extends State<HomePage> {
           'uangmasuk': monthlyData[0]['totalUangMasuk'] ?? 0.0,
           'uangkeluar': monthlyData[0]['totalUangKeluar'] ?? 0.0
         };
+         // Update the monthly income and expenses lists for the chart
+        int monthIndex =
+            int.parse(month.split('-')[1]) - 1; // Convert 'MM' to 0-indexed
+        monthlyIncome[monthIndex] = monthlyTotals['uangmasuk'] ?? 0;
+        monthlyExpenses[monthIndex] = monthlyTotals['uangkeluar'] ?? 0;
       } else {
         // If no data, reset totals
         monthlyTotals = {'uangmasuk': 0.0, 'uangkeluar': 0.0};
@@ -318,6 +331,14 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
+                    SizedBox(height: 30),
+
+                    // Add the MonthlyTotalsChart widget
+                    MonthlyTotalsChart(
+                      monthlyIncome: monthlyIncome,
+                      monthlyExpenses: monthlyExpenses,
+                    ),
+
                     SizedBox(height: 30),
 
                     // Display total money in a Card
