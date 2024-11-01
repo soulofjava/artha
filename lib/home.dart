@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:artha/DB/keuangan_helper.dart';
 import 'package:artha/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
@@ -243,7 +245,7 @@ class _HomePageState extends State<HomePage> {
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               Text(
-                                'Total Uang Masuk bulan ${formatSelectedMonth(selectedMonth!)}', // Display only month name
+                                'Total Uang Masuk bulan ${selectedMonth != null ? formatSelectedMonth(selectedMonth!) : 'N/A'}', // Check if selectedMonth is not null
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -264,9 +266,10 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 20),
-
-                      // Display total money out in a Card
+                      SizedBox(
+                        height: 28,
+                      ),
+// Display total money out in a Card
                       Card(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -279,7 +282,7 @@ class _HomePageState extends State<HomePage> {
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               Text(
-                                'Total Uang Masuk bulan ${formatSelectedMonth(selectedMonth!)}', // Display only month name
+                                'Total Uang Keluar bulan ${selectedMonth != null ? formatSelectedMonth(selectedMonth!) : 'N/A'}', // Check if selectedMonth is not null
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
