@@ -141,12 +141,21 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // Function to reload the data
+  void _reloadData() {
+    _fetchUniqueMonths(); // Refresh the unique months
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Home'),
         actions: [
+          IconButton(
+            icon: Icon(Icons.refresh), // Reload icon
+            onPressed: _reloadData, // Call reload function
+          ),
           IconButton(
             icon: Icon(Icons.logout),
             onPressed: _confirmLogout, // Show logout confirmation
