@@ -1,5 +1,6 @@
 import 'package:artha/DB/keuangan_helper.dart';
 import 'package:artha/reset_data_page.dart';
+import 'package:artha/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login_page.dart';
@@ -175,107 +176,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      drawer: Drawer(
-        child: Container(
-          color: Color(0xFFE8F5E9), // Light green background for drawer
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Color(0xFF4CAF50), // Dark green color for header
-                ),
-                child: Center(
-                  child: Image.asset(
-                    'lib/images/logo.jpg', // Replace with your logo image
-                    height: 80,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
-              ListTile(
-                leading: Icon(
-                  Icons.account_balance,
-                  color: Color(0xFF4CAF50), // Green icon for "Keuangan"
-                ),
-                title: Text('Keuangan'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            KeuanganPage()), // Navigate to Keuangan page
-                  );
-                },
-              ),
-              Divider(), // Divider between menu items
-              ListTile(
-                leading: Icon(
-                  Icons.import_export,
-                  color: Color(0xFF4CAF50), // Green icon for Import
-                ),
-                title: Text('Import Data'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            ImportPage()), // Navigate to Import page
-                  );
-                },
-              ),
-              Divider(),
-              ListTile(
-                leading: Icon(
-                  Icons.file_download,
-                  color: Color(0xFF4CAF50), // Green icon for Export
-                ),
-                title: Text('Export Data'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            ExportPage()), // Navigate to Export page
-                  );
-                },
-              ),
-              Divider(),
-              ListTile(
-                leading: Icon(
-                  Icons.restart_alt,
-                  color: Color(0xFF4CAF50), // Green icon for Reset Data
-                ),
-                title: Text('Reset Data'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            ResetDataPage()), // Navigate to Reset Data page
-                  );
-                },
-              ),
-              Divider(),
-              ListTile(
-                leading: Icon(
-                  Icons.person,
-                  color: Color(0xFF4CAF50), // Green icon for User
-                ),
-                title: Text('Pengguna'), // Change 'User' to 'Pengguna'
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            UserPage()), // Navigate to User page
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
+      drawer: AppDrawer(), // Use the new AppDrawer widget
       body: Center(
         child: username != null
             ? Padding(
