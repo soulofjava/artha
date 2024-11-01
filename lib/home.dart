@@ -20,12 +20,6 @@ class _HomePageState extends State<HomePage> {
   List<String> months = [];
   String? selectedMonth;
 
-  // Store monthly income and expenses for the chart
-  List<double> monthlyIncome =
-      List.filled(12, 0); // Initialize with 0 for each month
-  List<double> monthlyExpenses =
-      List.filled(12, 0); // Initialize with 0 for each month
-
   @override
   void initState() {
     super.initState();
@@ -80,11 +74,6 @@ class _HomePageState extends State<HomePage> {
           'uangmasuk': monthlyData[0]['totalUangMasuk'] ?? 0.0,
           'uangkeluar': monthlyData[0]['totalUangKeluar'] ?? 0.0
         };
-        // Update the monthly income and expenses lists for the chart
-        int monthIndex =
-            int.parse(month.split('-')[1]) - 1; // Convert 'MM' to 0-indexed
-        monthlyIncome[monthIndex] = monthlyTotals['uangmasuk'] ?? 0;
-        monthlyExpenses[monthIndex] = monthlyTotals['uangkeluar'] ?? 0;
       } else {
         // If no data, reset totals
         monthlyTotals = {'uangmasuk': 0.0, 'uangkeluar': 0.0};
@@ -158,7 +147,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // title: Text('Home'),
         actions: [
           IconButton(
             icon: Icon(Icons.refresh), // Reload icon
@@ -191,6 +179,11 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     SizedBox(height: 20),
+
+                    // Add the MonthlyTotalsChart widget above the dropdown
+                    MonthlyTotalsChart(), // No data passed to the chart
+
+                    SizedBox(height: 30),
 
                     // Month selection dropdown inside a Card
                     Card(
@@ -226,14 +219,6 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 30),
-
-                    // Add the MonthlyTotalsChart widget
-                    MonthlyTotalsChart(
-                      monthlyIncome: monthlyIncome,
-                      monthlyExpenses: monthlyExpenses,
-                    ),
-
                     SizedBox(height: 30),
 
                     // Display total money in a Card

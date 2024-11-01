@@ -1,12 +1,41 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:artha/DB/keuangan_helper.dart';
 
-class MonthlyTotalsChart extends StatelessWidget {
-  final List<double> monthlyIncome; // List of monthly income values
-  final List<double> monthlyExpenses; // List of monthly expense values
+class MonthlyTotalsChart extends StatefulWidget {
+  @override
+  _MonthlyTotalsChartState createState() => _MonthlyTotalsChartState();
+}
 
-  MonthlyTotalsChart(
-      {required this.monthlyIncome, required this.monthlyExpenses});
+class _MonthlyTotalsChartState extends State<MonthlyTotalsChart> {
+  final KeuanganHelper _keuanganHelper = KeuanganHelper.instance;
+  List<double> monthlyIncome =
+      List.filled(12, 0); // Initialize with 0 for each month
+  List<double> monthlyExpenses =
+      List.filled(12, 0); // Initialize with 0 for each month
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchMonthlyData();
+  }
+
+  Future<void> _fetchMonthlyData() async {
+    // Fetch monthly totals from the database and update state
+    for (int month = 1; month <= 12; month++) {
+      String monthStr = month < 10 ? '0$month' : '$month';
+      String yearMonth = '${DateTime.now().year}-$monthStr';
+      List<Map<String, dynamic>> monthlyData =
+          await _keuanganHelper.totalByMonth(yearMonth);
+
+      if (monthlyData.isNotEmpty) {
+        monthlyIncome[month - 1] = monthlyData[0]['totalUangMasuk'] ?? 0.0;
+        monthlyExpenses[month - 1] = monthlyData[0]['totalUangKeluar'] ?? 0.0;
+      }
+    }
+
+    setState(() {}); // Trigger a rebuild with the fetched data
+  }
 
   @override
   Widget build(BuildContext context) {
