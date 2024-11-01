@@ -1,13 +1,8 @@
 import 'package:artha/DB/keuangan_helper.dart';
-import 'package:artha/reset_data_page.dart';
 import 'package:artha/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login_page.dart';
-import 'keuangan_page.dart';
-import 'user_page.dart';
-import 'import_page.dart';
-import 'export_page.dart';
 import 'package:intl/intl.dart';
 import 'monthly_totals_chart.dart'; // Import the chart file
 
@@ -30,7 +25,6 @@ class _HomePageState extends State<HomePage> {
       List.filled(12, 0); // Initialize with 0 for each month
   List<double> monthlyExpenses =
       List.filled(12, 0); // Initialize with 0 for each month
-
 
   @override
   void initState() {
@@ -86,7 +80,7 @@ class _HomePageState extends State<HomePage> {
           'uangmasuk': monthlyData[0]['totalUangMasuk'] ?? 0.0,
           'uangkeluar': monthlyData[0]['totalUangKeluar'] ?? 0.0
         };
-         // Update the monthly income and expenses lists for the chart
+        // Update the monthly income and expenses lists for the chart
         int monthIndex =
             int.parse(month.split('-')[1]) - 1; // Convert 'MM' to 0-indexed
         monthlyIncome[monthIndex] = monthlyTotals['uangmasuk'] ?? 0;
@@ -164,7 +158,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home'),
+        // title: Text('Home'),
         actions: [
           IconButton(
             icon: Icon(Icons.refresh), // Reload icon
