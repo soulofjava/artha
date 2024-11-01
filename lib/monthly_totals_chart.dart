@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:artha/DB/keuangan_helper.dart';
+import 'package:intl/intl.dart';
 
 class MonthlyTotalsChart extends StatefulWidget {
   @override
@@ -9,10 +10,24 @@ class MonthlyTotalsChart extends StatefulWidget {
 
 class _MonthlyTotalsChartState extends State<MonthlyTotalsChart> {
   final KeuanganHelper _keuanganHelper = KeuanganHelper.instance;
-  List<double> monthlyIncome =
-      List.filled(12, 0); // Initialize with 0 for each month
-  List<double> monthlyExpenses =
-      List.filled(12, 0); // Initialize with 0 for each month
+  List<double> monthlyIncome = [];
+  List<double> monthlyExpenses = [];
+
+  // Static list of abbreviated month names
+  final List<String> monthNames = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec'
+  ];
 
   @override
   void initState() {
@@ -21,10 +36,15 @@ class _MonthlyTotalsChartState extends State<MonthlyTotalsChart> {
   }
 
   Future<void> _fetchMonthlyData() async {
-    // Fetch monthly totals from the database and update state
+    // Initialize income and expenses lists
+    monthlyIncome = List.filled(12, 0); // One for each month
+    monthlyExpenses = List.filled(12, 0); // One for each month
+
+    // Fetch totals for each month from SQLite
     for (int month = 1; month <= 12; month++) {
       String monthStr = month < 10 ? '0$month' : '$month';
-      String yearMonth = '${DateTime.now().year}-$monthStr';
+      String yearMonth =
+          '${DateTime.now().year}-$monthStr'; // Assuming this year's data
       List<Map<String, dynamic>> monthlyData =
           await _keuanganHelper.totalByMonth(yearMonth);
 
@@ -37,83 +57,93 @@ class _MonthlyTotalsChartState extends State<MonthlyTotalsChart> {
     setState(() {}); // Trigger a rebuild with the fetched data
   }
 
+  // Function to format currency in Rupiah
+  String formatCurrency(double amount) {
+    final formatter =
+        NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
+    return formatter.format(amount);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(16.0),
-      height: 250, // Height of the chart
-      child: LineChart(
-        LineChartData(
-          titlesData: FlTitlesData(
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                reservedSize: 40,
-                getTitlesWidget: (value, meta) {
-                  switch (value.toInt()) {
-                    case 0:
-                      return Text('Jan');
-                    case 1:
-                      return Text('Feb');
-                    case 2:
-                      return Text('Mar');
-                    case 3:
-                      return Text('Apr');
-                    case 4:
-                      return Text('May');
-                    case 5:
-                      return Text('Jun');
-                    case 6:
-                      return Text('Jul');
-                    case 7:
-                      return Text('Aug');
-                    case 8:
-                      return Text('Sep');
-                    case 9:
-                      return Text('Oct');
-                    case 10:
-                      return Text('Nov');
-                    case 11:
-                      return Text('Dec');
-                    default:
-                      return Text('');
-                  }
-                },
+      height: 300, // Height of the chart
+      child: Column(
+        children: [
+          // Title showing the current year
+          Text(
+            '${DateTime.now().year}', // Display current year
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 10), // Spacing between title and chart
+          Expanded(
+            // Make chart take remaining space
+            child: LineChart(
+              LineChartData(
+                titlesData: FlTitlesData(
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 40,
+                      getTitlesWidget: (value, meta) {
+                        int index = value.toInt();
+                        if (index >= 0 && index < monthNames.length) {
+                          return RotatedBox(
+                            quarterTurns: 1, // Rotate labels
+                            child: Text(monthNames[index],
+                                style: TextStyle(
+                                    fontSize: 10)), // Adjust font size
+                          );
+                        }
+                        return Text('');
+                      },
+                    ),
+                  ),
+                  leftTitles: AxisTitles(
+                    sideTitles:
+                        SideTitles(showTitles: false), // Hide vertical labels
+                  ),
+                  topTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  rightTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                ),
+                gridData: FlGridData(show: false), // Disable grid lines
+                borderData: FlBorderData(show: true),
+                minY: 0, // Set the minimum Y value
+                maxY: 15000000, // Set the maximum Y value to 15 million
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: List.generate(monthlyIncome.length, (index) {
+                      return FlSpot(index.toDouble(), monthlyIncome[index]);
+                    }),
+                    isCurved: true,
+                    color: Colors.green,
+                    dotData: FlDotData(show: false), // Hide dots
+                    belowBarData: BarAreaData(show: false),
+                  ),
+                  LineChartBarData(
+                    spots: List.generate(monthlyExpenses.length, (index) {
+                      return FlSpot(index.toDouble(), monthlyExpenses[index]);
+                    }),
+                    isCurved: true,
+                    color: Colors.red,
+                    dotData: FlDotData(show: false), // Hide dots
+                    belowBarData: BarAreaData(show: false),
+                  ),
+                ],
               ),
             ),
-            leftTitles: AxisTitles(
-              sideTitles: SideTitles(showTitles: true),
-            ),
-            topTitles: AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-            rightTitles: AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
           ),
-          gridData: FlGridData(show: true),
-          borderData: FlBorderData(show: true),
-          lineBarsData: [
-            LineChartBarData(
-              spots: List.generate(monthlyIncome.length, (index) {
-                return FlSpot(index.toDouble(), monthlyIncome[index]);
-              }),
-              isCurved: true,
-              color: Colors.green,
-              dotData: FlDotData(show: false),
-              belowBarData: BarAreaData(show: false),
-            ),
-            LineChartBarData(
-              spots: List.generate(monthlyExpenses.length, (index) {
-                return FlSpot(index.toDouble(), monthlyExpenses[index]);
-              }),
-              isCurved: true,
-              color: Colors.red,
-              dotData: FlDotData(show: false),
-              belowBarData: BarAreaData(show: false),
-            ),
-          ],
-        ),
+          // Display formatted currency for totals below the chart
+          Text(
+              'Total Uang Masuk ${DateTime.now().year}: ${formatCurrency(monthlyIncome.reduce((a, b) => a + b))}'),
+          Text(
+              'Total Uang Keluar ${DateTime.now().year}: ${formatCurrency(monthlyExpenses.reduce((a, b) => a + b))}'),
+        ],
       ),
     );
   }
