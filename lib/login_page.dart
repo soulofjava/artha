@@ -132,15 +132,6 @@ class _LoginPageState extends State<LoginPage> {
                 fit: BoxFit.contain,
               ),
               SizedBox(height: 20),
-              Text(
-                'Login',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF388E3C),
-                ),
-              ),
-              SizedBox(height: 20),
               TextField(
                 controller: _usernameController,
                 decoration: InputDecoration(
@@ -174,7 +165,8 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: _login,
                 child: Text('Login'),
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  padding: EdgeInsets.symmetric(vertical: 15),
+                  minimumSize: Size(double.infinity, 50),
                   shadowColor: Color(0xFF4CAF50).withOpacity(0.5),
                   elevation: 8,
                   shape: RoundedRectangleBorder(
@@ -199,7 +191,8 @@ class _LoginPageState extends State<LoginPage> {
                   icon: Icon(Icons.fingerprint),
                   label: Text('Masuk dengan Sidik Jari'),
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                    minimumSize: Size(double.infinity, 50),
                     shadowColor: Color(0xFF4CAF50).withOpacity(0.5),
                     elevation: 8,
                     shape: RoundedRectangleBorder(

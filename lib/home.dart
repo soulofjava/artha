@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:artha/DB/keuangan_helper.dart';
+import 'package:artha/widgets/InfoCard.dart';
 import 'package:artha/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -66,19 +67,44 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _displayMonthlyTotals(String month) async {
-    // Fetch total by month (assuming month is passed as 'YYYY-MM')
+    // Periksa apakah 'month' valid (contoh: '2024-12')
+    if (!RegExp(r'^\d{4}-\d{2}$').hasMatch(month)) {
+      throw FormatException('Invalid month format: $month');
+    }
+
+    // Ambil data bulan saat ini
     List<Map<String, dynamic>> monthlyData =
         await _keuanganHelper.totalByMonth(month);
+
+    // Ambil data bulan lalu
+    DateTime selectedDate = DateTime.parse('$month-01'); // Format yang valid
+    DateTime lastMonthDate = DateTime(
+      selectedDate.year,
+      selectedDate.month - 1,
+    );
+
+    String lastMonth =
+        '${lastMonthDate.year}-${lastMonthDate.month.toString().padLeft(2, '0')}';
+
+    List<Map<String, dynamic>> lastMonthData =
+        await _keuanganHelper.totalByMonth(lastMonth);
 
     setState(() {
       if (monthlyData.isNotEmpty) {
         monthlyTotals = {
           'uangmasuk': monthlyData[0]['totalUangMasuk'] ?? 0.0,
-          'uangkeluar': monthlyData[0]['totalUangKeluar'] ?? 0.0
+          'uangkeluar': monthlyData[0]['totalUangKeluar'] ?? 0.0,
         };
       } else {
-        // If no data, reset totals
         monthlyTotals = {'uangmasuk': 0.0, 'uangkeluar': 0.0};
+      }
+
+      if (lastMonthData.isNotEmpty) {
+        monthlyTotals['saldoLalu'] =
+            (lastMonthData[0]['totalUangMasuk'] ?? 0.0) -
+                (lastMonthData[0]['totalUangKeluar'] ?? 0.0);
+      } else {
+        monthlyTotals['saldoLalu'] = 0.0;
       }
     });
   }
@@ -230,78 +256,40 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 30),
+                      SizedBox(height: 28),
+                      InfoCard(
+                        title: 'Saldo Akhir Bulan Lalu',
+                        value: formatCurrency(monthlyTotals['saldoLalu'] ?? 0),
+                        titleColor: Colors.blue,
+                        valueColor: Colors.blue,
+                      ),
+                      SizedBox(height: 28),
 
-                      // Display total money in a Card
-                      Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        elevation: 4,
-                        margin: EdgeInsets.symmetric(horizontal: 20),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Text(
-                                'Total Uang Masuk bulan ${selectedMonth != null ? formatSelectedMonth(selectedMonth!) : 'N/A'}', // Check if selectedMonth is not null
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.green,
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              Text(
-                                formatCurrency(monthlyTotals['uangmasuk'] ?? 0),
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.green,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                      InfoCard(
+                        title:
+                            'Total Pemasukan ${selectedMonth != null ? formatSelectedMonth(selectedMonth!) : 'N/A'}',
+                        value: formatCurrency(monthlyTotals['uangmasuk'] ?? 0),
+                        titleColor: Colors.green,
+                        valueColor: Colors.green,
                       ),
-                      SizedBox(
-                        height: 28,
+                      SizedBox(height: 28),
+
+                      InfoCard(
+                        title:
+                            'Total Pengeluaran ${selectedMonth != null ? formatSelectedMonth(selectedMonth!) : 'N/A'}',
+                        value: formatCurrency(monthlyTotals['uangkeluar'] ?? 0),
+                        titleColor: Colors.red,
+                        valueColor: Colors.red,
                       ),
-// Display total money out in a Card
-                      Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        elevation: 4,
-                        margin: EdgeInsets.symmetric(horizontal: 20),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Text(
-                                'Total Uang Keluar bulan ${selectedMonth != null ? formatSelectedMonth(selectedMonth!) : 'N/A'}', // Check if selectedMonth is not null
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.red,
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              Text(
-                                formatCurrency(
-                                    monthlyTotals['uangkeluar'] ?? 0),
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.red,
-                                ),
-                              ),
-                            ],
-                          ),
+                      SizedBox(height: 28),
+
+                      InfoCard(
+                        title:
+                            'Saldo ${selectedMonth != null ? formatSelectedMonth(selectedMonth!) : 'N/A'}',
+                        value: formatCurrency(
+                          (monthlyTotals['saldoLalu'] ?? 0) +
+                              (monthlyTotals['uangmasuk'] ?? 0) -
+                              (monthlyTotals['uangkeluar'] ?? 0),
                         ),
                       ),
                     ],
