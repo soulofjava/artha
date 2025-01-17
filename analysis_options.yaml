@@ -11,12 +11,15 @@ analyzer:
   errors:
     use_key_in_widget_constructors: ignore
     library_private_types_in_public_api: ignore
-    prefer_const_constructors: ignore ignore ignore ignore ignore ignore
+    prefer_const_constructors: ignore 
     no_leading_underscores_for_local_identifiers: ignore
     use_build_context_synchronously: ignore
     prefer_const_literals_to_create_immutables: ignore
     depend_on_referenced_packages: ignore
     prefer_const_declarations: ignore
+    await_only_futures: ignore
+    deprecated_member_use: ignore
+    sort_child_properties_last: ignore
 include: package:flutter_lints/flutter.yaml
 
 linter:

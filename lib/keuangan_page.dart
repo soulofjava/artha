@@ -396,7 +396,7 @@ class _KeuanganPageState extends State<KeuanganPage> {
                                 ),
                                 SizedBox(height: 8),
                                 Text(
-                                  'Tanggal: ${keuangan[KeuanganHelper.columnTanggal]}',
+                                  '${keuangan[KeuanganHelper.columnTanggal]}',
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: Colors.grey[600],
@@ -409,20 +409,10 @@ class _KeuanganPageState extends State<KeuanganPage> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Icon(Icons.add_circle,
-                                          color: Colors.green,
-                                          size: 20), // Ikon untuk uang masuk
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            'Masuk:',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.black,
-                                            ),
-                                          ),
                                           Text(
                                             formatCurrency(keuangan[KeuanganHelper
                                                 .columnUangMasuk]), // Call the formatCurrency function directly
@@ -442,20 +432,10 @@ class _KeuanganPageState extends State<KeuanganPage> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Icon(Icons.remove_circle,
-                                          color: Colors.red,
-                                          size: 20), // Ikon untuk uang keluar
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.end,
                                         children: [
-                                          Text(
-                                            'Keluar:',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.black,
-                                            ),
-                                          ),
                                           Text(
                                             formatCurrency(keuangan[KeuanganHelper
                                                 .columnUangKeluar]), // Call the formatCurrency function directly
