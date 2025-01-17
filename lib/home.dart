@@ -205,22 +205,10 @@ class _HomePageState extends State<HomePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Welcome Text
-                      Text(
-                        'Hi, $username!',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.teal,
-                        ),
-                      ),
-                      SizedBox(height: 20),
-
                       // Add the MonthlyTotalsChart widget above the dropdown
                       MonthlyTotalsChart(), // No data passed to the chart
 
-                      SizedBox(height: 30),
+                      SizedBox(height: 15),
 
                       // Month selection dropdown inside a Card
                       Card(
@@ -256,14 +244,14 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 28),
+                      SizedBox(height: 15),
                       InfoCard(
                         title: 'Saldo Akhir Bulan Lalu',
                         value: formatCurrency(monthlyTotals['saldoLalu'] ?? 0),
                         titleColor: Colors.blue,
                         valueColor: Colors.blue,
                       ),
-                      SizedBox(height: 28),
+                      SizedBox(height: 15),
 
                       InfoCard(
                         title:
@@ -272,7 +260,7 @@ class _HomePageState extends State<HomePage> {
                         titleColor: Colors.green,
                         valueColor: Colors.green,
                       ),
-                      SizedBox(height: 28),
+                      SizedBox(height: 15),
 
                       InfoCard(
                         title:
@@ -281,7 +269,7 @@ class _HomePageState extends State<HomePage> {
                         titleColor: Colors.red,
                         valueColor: Colors.red,
                       ),
-                      SizedBox(height: 28),
+                      SizedBox(height: 15),
 
                       InfoCard(
                         title:
